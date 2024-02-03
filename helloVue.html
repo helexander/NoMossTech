@@ -6,7 +6,9 @@
 
 <!-- 
 	ref:
+	- To access the ref, we need to declare and expose a ref with a matching name
 	- can take any value type and create an object that exposes the inner value under a .value property
+	- the template ref is only accessible after the component is MOUNTED
  -->
 
 <!-- SFC: Single file component, encapsulates the component's logic (JS), template (HTML) and styles (CSS) in a single file -->
@@ -16,6 +18,16 @@
 
 <!-- v-model: automatically SYNCS the input's value with the bound state so we no longer need to use an event handler -->
 
+<!-- computed: a computed ref computes its '.value' based on other reactive data sources. It caches the result and automatically updates it when its dependencies change -->
+
+<!-- lifecycle hook - the ability to register a callback to be called at certain times of the component's lifecycle -->
+
+<!-- watch(): directly watch a ref, and the callback gets fired whenever the value changes. watch can also watch other types of data sources -->
+
+<!-- v-bind: to pass a dynamic value prop, we can use the 'v-bind' syntax -->
+
+<!-- v-on: the parent can listen to child-emitted events using 'v-on' where the handler receives the extra argument from the child emit call and assigns it to a local state -->
+
 <script type="importmap">
 	{
 		"imports": {
@@ -24,48 +36,59 @@
 	}
 </script>
 
-<!-- <div id="app"></div>
-
 <script type="module">
-	import { createApp } from 'vue';
-	import MyComponent from './components/my-component.js';
-
-	createApp(MyComponent).mount('#app');
-</script> -->
-
-<script type="module">
-	import { createApp, reactive, ref } from 'vue';
+	import { createApp, reactive, ref, onMounted } from 'vue';
 
 	createApp({
 		setup() {
 			const count = ref(0);
 			const text = ref('');
-			const message = ref('Hello World!');
+			const awesome = ref(true);
+			const message = ref(null);
 
 			function increment() {
 				count.value++;
 			}
 
+			function toggle() {
+				awesome.value = !awesome.value;
+			}
+
+			onMounted(() => {
+				message.value.textContent = 'Hello Beautiful World!';
+			});
+
 			return {
 				count,
 				text,
+				awesome,
 				message,
-				increment
+				increment,
+				toggle
 			};
 		}
 	}).mount('#app');
 </script>
 
 <div id="app">
-	<h1>{{ message }}</h1>
-	<p>Count is: {{ count }}</p>
-	<button @click="increment">Increase count</button>
+	<h1 ref="message">Some text</h1>
+	<div class="section">
+		<p>Count is: {{ count }}</p>
+		<button @click="increment">Increase count</button>
+	</div>
+
 	<div class="section">
 		<input
 			v-model="text"
 			placeholder="Enter some text here"
 		/>
 		<p>{{ text }}</p>
+	</div>
+
+	<div class="section">
+		<button @click="toggle">Change text</button>
+		<h3 v-if="awesome">No Moss</h3>
+		<h3 v-else>Yes Moss</h3>
 	</div>
 </div>
 

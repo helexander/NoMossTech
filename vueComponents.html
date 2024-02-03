@@ -1,0 +1,32 @@
+<script type="importmap">
+	{
+		"imports": {
+			"vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+		}
+	}
+</script>
+
+<script type="module">
+	import { createApp, ref } from 'vue';
+	import ChildComp from './components/ChildComp.js';
+
+	createApp({
+		components: {
+			ChildComp
+		},
+		setup() {
+			const childMsg = ref('No child message yet');
+			const slotMessage = ref('This is some slot text');
+
+			return {
+				childMsg,
+				slotMessage
+			};
+		}
+	}).mount('#app');
+</script>
+
+<div id="app">
+	<child-comp @response="msg => childMsg = msg">Slot: {{slotMessage}}</child-comp>
+	<p>{{ childMsg }}</p>
+</div>

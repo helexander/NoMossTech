@@ -1,0 +1,73 @@
+<script type="importmap">
+	{
+		"imports": {
+			"vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+		}
+	}
+</script>
+
+<script type="module">
+	import { createApp, ref, computed } from 'vue';
+
+	createApp({
+		setup() {
+			let id = 0;
+
+			const newToDo = ref('');
+			const hideCompleted = ref(false);
+			const toDoList = ref([
+				{ id: id++, text: 'Learn HTML', done: true },
+				{ id: id++, text: 'Learn JavaScript', done: true },
+				{ id: id++, text: 'Learn Vue', done: false }
+			]);
+			const filteredTodos = computed(() => {
+				return hideCompleted.value ? toDoList.value.filter((item) => !item.done) : toDoList.value;
+			});
+
+			function addItem() {
+				toDoList.value.push({ id: id++, text: newToDo.value, done: false });
+				newToDo.value = '';
+			}
+
+			function removeToDo(todo) {
+				toDoList.value = toDoList.value.filter((item) => item != todo);
+			}
+
+			return {
+				hideCompleted,
+				newToDo,
+				toDoList,
+				filteredTodos,
+				addItem,
+				removeToDo
+			};
+		}
+	}).mount('#app');
+</script>
+
+<div id="app">
+	<form @submit.prevent="addItem">
+		<input v-model="newToDo" />
+		<button>Add To Do</button>
+	</form>
+	<ul>
+		<li
+			v-for="todo in filteredTodos"
+			:key="todo.id"
+		>
+			<input
+				type="checkbox"
+				v-model="todo.done"
+			/>
+			<span>{{todo.text}}</span>
+			<button @click="removeToDo(todo)">X</button>
+		</li>
+	</ul>
+	<button @click="hideCompleted = !hideCompleted">{{ hideCompleted ? 'Show all' : 'Hide completed' }}</button>
+</div>
+
+<style scoped>
+	.done {
+		text-decoration: line-through;
+	}
+</style>
